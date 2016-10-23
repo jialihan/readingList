@@ -1,0 +1,8 @@
+error:
+  whitelabel:
+    enabled: false
+
+
+logging:
+  level:
+    root: DEBUG
