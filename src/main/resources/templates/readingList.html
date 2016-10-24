@@ -5,7 +5,9 @@
 </head>
 
 <body>
-<h2>Your Reading List</h2>
+<h2 th:text="${'Hi, '+name}" align="center"></h2>
+<h2 th:align = "center">This is your Reading List</h2>
+
 <div th:unless="${#lists.isEmpty(books)}">
     <dl th:each="book : ${books}">
         <dt class="bookHeadline">

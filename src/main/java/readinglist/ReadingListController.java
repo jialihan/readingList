@@ -3,8 +3,11 @@ package readinglist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,25 +46,25 @@ public class ReadingListController {
     }
 
 
-    @RequestMapping(value="/readingList", method = RequestMethod.GET)
+    @RequestMapping(value="/readingList/{name}", method = RequestMethod.GET)
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public String readersBooks (Model model)
+    public String readersBooks (@PathVariable String name, Model model)
     {
-        List<Book> readingList= readingListService.fetchReadingListByReader(reader);
-        if(readingList != null)
-        {
+        List<Book> readingList= readingListService.fetchReadingListByReader(name);
+        model.addAttribute("username",name);
+        if(readingList != null) {
             model.addAttribute("books", readingList);
         }
         return "readingList";
     }
 
 
-    @RequestMapping(value = "/readingList", method = RequestMethod.POST)
-    public String addToReadingList(Book book)
+    @RequestMapping(value = "/readingList/{name}", method = RequestMethod.POST)
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public String addToReadingList(@PathVariable String name, Book book)
     {
-
-        readingListService.addBookByReader(reader,book);
-        return "redirect:/readingList";
+        readingListService.addBookByReader(name,book);
+        return "redirect:/readingList/"+name;
     }
 
 
@@ -72,12 +75,32 @@ public class ReadingListController {
         return "login";
     }
 
-    @RequestMapping(method=RequestMethod.GET, value= "/addSuccess")
-    public String addSuccess(){
+   /*
+    *
+    @RequestMapping(method=RequestMethod.GET, value= "/pass")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    public String loginPass(ModelMap model){
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+        model.addAttribute("author", name);
+        return "welcome";
 
-        return "addSuccess";
     }
+    *
+    */
+
+   @RequestMapping(method=RequestMethod.GET, value= "/pass")
+   @PreAuthorize("hasAnyRole('ADMIN','USER')")
+   public String getName(ModelMap model){
+
+       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+       String name = auth.getName(); //get logged in username
+
+       return "redirect:/readingList/"+name;
+
+   }
+
 
 
 

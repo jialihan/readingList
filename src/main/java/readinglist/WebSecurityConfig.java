@@ -15,12 +15,32 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 /**
  * Created by jialihan on 16/10/9.
  */
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/", "/index").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/pass")
+                .permitAll()
+                .and()
+                .logout()
+                .permitAll();
+
+    }
+}
+
+    http.csrf()
+        .csrfTokenRepository(csrfTokenRepository());
 
 
     @Autowired
@@ -30,27 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication().withUser("admin").password("123").roles("ADMIN");
     }
 
-
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http    .csrf()
-                  .csrfTokenRepository(csrfTokenRepository());
-        http
-                .authorizeRequests()
-                .antMatchers("/","/index").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/readingList")
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
-
-
-    }
 
 
     private CsrfTokenRepository csrfTokenRepository()

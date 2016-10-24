@@ -1,5 +1,9 @@
 package readinglist;
 
+/**
+ * Created by jialihan on 16/10/24.
+ */
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,13 +21,14 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 /**
  * Created by jialihan on 16/10/23.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ReadingListApplication.class)
 @WebAppConfiguration
-public class MockMvcWebTests {
+public class MockMvcWebTest {
 
     @Autowired
     WebApplicationContext webContext;
@@ -44,11 +49,11 @@ public class MockMvcWebTests {
     }
 
     @Test
-   // @WithUserDetails("jiali")
+    // @WithUserDetails("jiali")
     @WithMockUser(username="jiali", password="123", roles="USER")
     public void homePage_authenticatedUser() throws Exception {
 
-        mockMvc.perform(get("/readingList"))
+        mockMvc.perform(get("/readingList/jiali"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("readingList"))
                 .andExpect(model().attribute("books", hasSize(0)));
